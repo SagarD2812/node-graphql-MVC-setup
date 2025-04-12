@@ -9,6 +9,7 @@ const userTypeDefs = gql`
     last_name: String
     email: String!
     phone_no: String
+    password: String!
   }
 
   type UserResponse {
@@ -18,6 +19,7 @@ const userTypeDefs = gql`
     users: [User]
   }
 
+   
   type Query {
     getAllUsers: UserResponse!
   }
@@ -28,8 +30,24 @@ const userTypeDefs = gql`
       last_name: String!
       email: String!
       phone_no: String
+      password: String!
     ): UserResponse!
   }
+
+
+  type AuthResponse {
+    status: String!
+    code: Int!
+    response: String!
+    token: String!
+    users: [User]
+  }
+
+   type Mutation {
+    login(email: String!, password: String!): AuthResponse!
+  }
+
+
 `;
 
 export default userTypeDefs;

@@ -1,14 +1,60 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server-core';
-// import config from 'config';
-// import artistModel from '../models/artistModel.js';
-// import errorHandler from './error.controller.js';
-// import { signJwt, } from '../utils/jwt.js';
-// import checkIsLoggedIn from '../middleware/checkIsLoggedIn.js';
-// import followModel from '../models/followModel.js';
-// import mongoose from 'mongoose';
+
+import jwt from 'jsonwebtoken';
 import userModel from '../model/userModel.js';
 
+const login = async (_, { email, password}) => {
 
+  try {
+    // Check if user exists
+    const users = await userModel.findOne({ email });
+    if (!users) {
+      return {
+        status: 'error',
+        code: 401,
+        response: 'Invalid email or password',
+        token: '',
+        users: [],
+      };
+    }
+
+    // Check if password matches
+    const isMatch = await users.comparePassword(password);
+    if (!isMatch) {
+      
+      return {
+        status: 'error',
+        code: 401,
+        response: 'Invalid email or password',
+        token: '',
+        users: [],
+      };
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: users._id }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
+   
+    return {
+      status: 'success',
+      code: 200,
+      response: 'Login successful',
+      token,
+      users: [users]
+    };
+  } catch (error) {
+   
+    return {
+      status: 'error',
+      code: 500,
+      response: 'Server error',
+      token: '',
+      users: [],
+    };
+  }
+
+};
 
 const getAllUsers = async (_, args) => {
     try {
@@ -31,13 +77,14 @@ const getAllUsers = async (_, args) => {
 };
 
 
-const createUser = async (_, { first_name, last_name, email, phone_no }) => {
+const createUser = async (_, { first_name, last_name, email, phone_no, password }) => {
     try {
       const newUser = new userModel({
         first_name,
         last_name,
         email,
         phone_no,
+        password,
       });
       await newUser.save();
       return {
@@ -47,6 +94,8 @@ const createUser = async (_, { first_name, last_name, email, phone_no }) => {
         users: [newUser],
       };
     } catch (error) {
+     // Log the error for debugging
+
       return {
         status: 'error',
         code: 500,
@@ -55,5 +104,8 @@ const createUser = async (_, { first_name, last_name, email, phone_no }) => {
       };
     }
   };
+
   
-export default {getAllUsers,createUser}
+
+  
+export default {getAllUsers,createUser,login}

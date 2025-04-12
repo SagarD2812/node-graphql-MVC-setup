@@ -1,5 +1,6 @@
 import RoleController from '../controller/RoleController.js';
 
+
 const roleResolvers = {
   Query: {
     getAllRoles: RoleController.getAllRoles,

@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema(
     phone_no: {
       type: String
     },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
     // password: {
     //   type: String,
     //   required: true,
@@ -42,6 +47,17 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
+
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
 
 userSchema.index({ email: 1 });
 

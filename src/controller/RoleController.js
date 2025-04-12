@@ -1,11 +1,4 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server-core';
-// import config from 'config';
-// import artistModel from '../models/artistModel.js';
-// import errorHandler from './error.controller.js';
-// import { signJwt, } from '../utils/jwt.js';
-// import checkIsLoggedIn from '../middleware/checkIsLoggedIn.js';
-// import followModel from '../models/followModel.js';
-// import mongoose from 'mongoose';
 
 import roleModel from '../model/roleModel.js';
 
