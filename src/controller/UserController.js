@@ -2,6 +2,7 @@ import { AuthenticationError, ForbiddenError } from 'apollo-server-core';
 
 import jwt from 'jsonwebtoken';
 import userModel from '../model/userModel.js';
+// User registration
 
 const login = async (_, { email, password}) => {
 
